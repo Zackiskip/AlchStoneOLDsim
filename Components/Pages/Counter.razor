@@ -1,0 +1,382 @@
+﻿@page "/counter"
+@using System.Runtime.CompilerServices
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Web
+@using System.Threading.Tasks
+
+
+<PageTitle>Simulator</PageTitle>
+
+<h1>Alch stone simulator</h1>
+
+
+<table>
+    <tbody>
+        <tr>
+            <td>
+                <p>Total Cost</p>
+            </td>
+            <td>
+                <p>@totalCost.ToString("N2")</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>Average shining cost</p>
+            </td>
+            <td>
+                <p>@averageShiningCost.ToString("N2")</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>Average splendid cost</p>
+            </td>
+            <td>
+                <p>@averageSplendidCost.ToString("N2")</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>Average resplendent cost</p>
+            </td>
+            <td>
+                <p>@averageResplendents.ToString("N2")</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>Average sharp cost</p>
+            </td>
+            <td>
+                <p>@averageSharp.ToString("N2")</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>Average sturdy cost</p>
+            </td>
+            <td>
+                <p>@averageSturdy.ToString("N2")</p>
+            </td>
+        </tr>
+       
+        <tr>
+            <td>
+                <p>Total clicks</p>
+            </td>
+            <td>
+                <p>@totalClicks</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>total shinings</p>
+            </td>
+            <td>
+                <p>@totalShinings</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>total splendids</p>
+            </td>
+            <td>
+                <p>@totalSplendids</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>total resplendents</p>
+            </td>
+            <td>
+                <p>@totalResplendents</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>total sturdys</p>
+            </td>
+            <td>
+                <p>@totalSturdys</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>total sharps</p>
+            </td>
+            <td>
+                <p>@totalSharps</p>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                <p>random number</p>
+            </td>
+            <td>
+                <p>@CurrentRNG</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>total broken stones</p>
+            </td>
+            <td>
+                <p>@totalBrokenStones</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>current tier</p>
+            </td>
+            <td>
+                <p>@currentTier</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <p>polished attempts</p>
+            </td>
+            <td>
+                <p>@totalPolishedAttempts</p>
+            </td>
+        </tr>
+
+    </tbody>
+</table>
+
+<button class="btn btn-primary" @onclick="StartSimulator">start</button>
+<div>current cost per mat: <input type="number" @bind="materialCost" placeholder="enter a material's cost" /></div>
+<div>experience per mat <input type="number" @bind="materialExperience"
+        placeholder="enter a material's base experience" /></div>
+<div>amount of clicks <input type="number" @bind="numberOfClicks"
+        placeholder="how many clicks" /></div>
+<button class="btn btn-primary" @onclick="StopSimulator">stop</button>
+
+@code {
+    private int numberOfClicks = 1000;
+    private double CurrentRNG = 0;
+
+
+    private double materialCost = 103448;
+    private double materialExperience = .725;
+    private double totalCost = 0;
+    private double averageShiningCost = 0;
+    private double averageResplendents = 0;
+    private double averageSharp = 0;
+    private double averageSturdy = 0;
+    private double alchemyStoneCurrentExperience = 0;
+    private double alchemyStoneMaxExperience = 150;
+    private double averageSplendidCost = 0;
+    private int totalShinings = 0;
+    private int totalSplendids = 0;
+    private int totalResplendents = 0;
+    private int totalSharps = 0;
+    private int totalSturdys = 0;
+    private int totalAlchemyStones = 0;
+    private int totalPolishedAttempts = 0;
+    private int running = 0;
+    private double neededExpereince = 0;
+    private int totalClicks = 0;
+    private double prefferedExperienceToClick = 150;
+    private int totalBrokenStones = 0;
+    private string currentTier = "Polished";
+
+    private async Task StartSimulator()
+    {
+
+        running = 1;
+        totalAlchemyStones++;
+        for (int i = 0; i < numberOfClicks; i++)
+        {//x is the amount of material that is needed to reach the max or preffered experience
+            Random random = new Random();
+            double randDouble = random.NextDouble();
+
+            switch (currentTier)
+            {
+                case "Polished":
+                    if (alchemyStoneCurrentExperience < 80)
+                    {
+                        neededExpereince = prefferedExperienceToClick - alchemyStoneCurrentExperience;
+                        double x = neededExpereince / materialExperience;
+                        totalCost += x * materialCost;
+                        alchemyStoneCurrentExperience = prefferedExperienceToClick;
+                    }
+                    break;
+                case "Sturdy":
+                    if (alchemyStoneCurrentExperience < 80)
+                    {
+                        neededExpereince = alchemyStoneMaxExperience - alchemyStoneCurrentExperience;
+                        double x = neededExpereince / materialExperience;
+                        totalCost += x * materialCost * (1.33);
+                        alchemyStoneCurrentExperience = alchemyStoneMaxExperience;
+                    }
+                    break;
+                case "Sharp":
+                    if (alchemyStoneCurrentExperience < 80)
+                    {
+                        neededExpereince = alchemyStoneMaxExperience - alchemyStoneCurrentExperience;
+                        double x = neededExpereince / materialExperience;
+                        totalCost += x * materialCost * (1.33) * (1.33);
+                        alchemyStoneCurrentExperience = alchemyStoneMaxExperience;
+                    }
+                    break;
+                case "Resplendent":
+                    if (alchemyStoneCurrentExperience < 80)
+                    {
+                        neededExpereince = alchemyStoneMaxExperience - alchemyStoneCurrentExperience;
+                        double x = neededExpereince / materialExperience;
+                        totalCost += x * materialCost * (1.33) * (1.33) * (1.33);
+                        alchemyStoneCurrentExperience = alchemyStoneMaxExperience;
+                    }
+                    break;
+                case "Splendid":
+                    if (alchemyStoneCurrentExperience < 80)
+                    {
+                        neededExpereince = alchemyStoneMaxExperience - alchemyStoneCurrentExperience;
+                        double x = neededExpereince / materialExperience;
+                        totalCost += x * materialCost * (1.33) * (1.33) * (1.33) * (1.33);
+                        alchemyStoneCurrentExperience = alchemyStoneMaxExperience;
+                    }
+                    break;
+            }
+
+            totalClicks++;
+            totalCost += 300000; //blackstone cost at max price
+            switch (currentTier)
+            {
+                case "Polished":
+                    totalPolishedAttempts++;
+                    if (randDouble <= .036)
+                    {
+                        currentTier = "Sturdy";
+
+                        alchemyStoneCurrentExperience = 0;
+                        totalSturdys++;
+                    }
+                    else if (randDouble > .036)
+                    {
+                        alchemyStoneCurrentExperience = alchemyStoneCurrentExperience / 2;
+                    }
+                    break;
+                case "Sturdy":
+
+                    if (randDouble <= .042)
+                    {
+                        currentTier = "Sharp";
+
+                        alchemyStoneCurrentExperience = 0;
+                        totalSharps++;
+                    }
+                    else if (randDouble >= (1 - .0468))
+                    {
+                        alchemyStoneCurrentExperience = alchemyStoneCurrentExperience / 2;
+                    }
+                    else
+                    {
+                        currentTier = "Polished";
+                        alchemyStoneCurrentExperience = 0;
+                    }
+                    break;
+                case "Sharp":
+
+                    if (randDouble <= .042)
+                    {
+                        currentTier = "Resplendent";
+
+                        alchemyStoneCurrentExperience = 0;
+                        totalResplendents++;
+                    }
+                    else if (randDouble >= (1 - .37))
+                    {
+                        alchemyStoneCurrentExperience = alchemyStoneCurrentExperience / 2;
+                    }
+                    else
+                    {
+                        currentTier = "Sturdy";
+                        alchemyStoneCurrentExperience = 0;
+                    }
+                    break;
+                case "Resplendent":
+
+                    if (randDouble <= .03)
+                    {
+                        currentTier = "Splendid";
+
+                        alchemyStoneCurrentExperience = 0;
+                        totalSplendids++;
+                    }
+                    else if (randDouble >= (1 - .27))
+                    {
+                        alchemyStoneCurrentExperience = alchemyStoneCurrentExperience / 2;
+                    }
+                    else
+                    {
+                        currentTier = "Polished";
+                        alchemyStoneCurrentExperience = 0;
+                        totalBrokenStones++;
+                    }
+                    break;
+                case "Splendid":
+
+                    if (randDouble <= .03)
+                    {
+                        currentTier = "Polished";
+
+                        alchemyStoneCurrentExperience = 0;
+                        totalShinings++;
+                    }
+                    else if (randDouble >= (1 - .17))
+                    {
+                        alchemyStoneCurrentExperience = alchemyStoneCurrentExperience / 2;
+                    }
+                    else
+                    {
+                        currentTier = "Polished";
+                        alchemyStoneCurrentExperience = 0;
+                        totalBrokenStones++;
+                    }
+                    break;
+
+            }
+            averageShiningCost = totalCost / totalShinings;
+            averageSplendidCost = totalCost / totalSplendids;
+            averageSharp = totalCost / totalSharps;
+            averageSturdy = totalCost / totalSturdys;
+            averageResplendents = totalCost / totalResplendents;
+            
+            CurrentRNG = randDouble;
+        }
+
+
+    }
+    private void StopSimulator()
+    {
+        
+        averageResplendents = 0;
+        averageSharp = 0;
+        averageSturdy = 0;
+        CurrentRNG = 0;
+        materialCost = 103448;
+        materialExperience = .725;
+        totalCost = 0;
+        averageShiningCost = 0;
+        alchemyStoneCurrentExperience = 0;
+        alchemyStoneMaxExperience = 150;
+        averageSplendidCost = 0;
+        totalShinings = 0; totalSplendids = 0;
+        totalResplendents = 0;
+        totalSharps = 0;
+        totalSturdys = 0;
+        totalAlchemyStones = 0;
+        totalPolishedAttempts = 0;
+        running = 0;
+        neededExpereince = 0;
+        totalClicks = 0;
+        prefferedExperienceToClick = 150;
+        totalBrokenStones = 0;
+        currentTier = "Polished";
+    }
+}
+}
