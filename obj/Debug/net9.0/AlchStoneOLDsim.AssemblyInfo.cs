@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AlchStoneOLDsim")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c9aba7f931a7c352cfc0a86f07c2d93b2fa599c0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ee1946e19adeb58abc65ab5fb209a371a376c376")]
 [assembly: System.Reflection.AssemblyProductAttribute("AlchStoneOLDsim")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AlchStoneOLDsim")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
