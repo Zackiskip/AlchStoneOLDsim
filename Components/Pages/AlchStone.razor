@@ -176,7 +176,6 @@
     private int totalSturdys = 0;
     private int totalAlchemyStones = 0;
     private int totalPolishedAttempts = 0;
-    private int running = 0;
     private double neededExpereince = 0;
     private int totalClicks = 0;
     private double prefferedExperienceToClick = 150;
@@ -186,7 +185,6 @@
     private async Task StartSimulator()
     {
 
-        running = 1;
         totalAlchemyStones++;
         for (int i = 0; i < numberOfClicks; i++)
         {//x is the amount of material that is needed to reach the max or preffered experience
@@ -371,7 +369,6 @@
         totalSturdys = 0;
         totalAlchemyStones = 0;
         totalPolishedAttempts = 0;
-        running = 0;
         neededExpereince = 0;
         totalClicks = 0;
         prefferedExperienceToClick = 150;

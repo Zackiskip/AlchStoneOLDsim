@@ -1,0 +1,270 @@
+﻿@page "/weather"
+@attribute [StreamRendering]
+@using System.Runtime.CompilerServices
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Web
+@using System.Threading.Tasks
+
+
+<PageTitle>Accessory Simulator</PageTitle>
+
+<h1>Accessory Simulator</h1>
+
+<p>Current Accessory: @currentAccessory</p>
+
+<table>
+    <tbody>
+        <tr>
+            <td>
+                Pen attempts:
+            </td>
+            <td>
+                @penSuccess
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Tet attempts:
+            </td>
+            <td>
+                @tetSuccess
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Tri attempts:
+            </td>
+            <td>
+                @triSuccess
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Duo attempts:
+            </td>
+            <td>
+                @duoSuccess
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Pri attempts:
+            </td>
+            <td>
+                @priSuccess
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Base accessories:
+            </td>
+            <td>
+                @totalBases
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Total silver spent:
+            </td>
+            <td>
+                @totalCost.ToString("N2")
+            </td>
+            <td>
+                
+            </td>
+           
+        </tr>
+    </tbody>
+</table>
+
+<button class="btn btn-primary" @onclick="StartSimulator">start</button>
+<div>Amount of clicks <input type="number" @bind="numberOfClicks"
+        placeholder="how many clicks" /></div>
+<div>Current cost per base: <input type="number" @bind="baseCost" placeholder="enter a base's cost" /></div>
+<div>Base stack for Pri: <input type="number" @bind="priStack" placeholder="enter a Stack" /></div>
+<div>Base stack for Duo:<input type="number" @bind="duoStack" placeholder="enter a Stack" /></div>
+<div>Base stack for Tri: <input type="number" @bind="triStack" placeholder="enter a Stack" /></div>
+<div>Base stack for Tet: <input type="number" @bind="tetStack" placeholder="enter a Stack" /></div>
+<div>Base stack for Pen: <input type="number" @bind="penStack" placeholder="enter a Stack" /></div>
+
+@code {
+    private string currentAccessory="Deboreka Necklace";
+    private int priStack=50;
+    private int duoStack=60;
+    private int triStack=80;
+    private int tetStack=115;
+    private int penStack=315;
+    private int priAgris=0;
+    private int duoAgris=0;
+    private int triAgris=0;
+    private int tetAgris=0;
+    private int penAgris=0;
+    private int penSuccess=0;
+    private int tetSuccess=0;
+    private int triSuccess=0;
+    private int duoSuccess=0;
+    private int priSuccess=0;
+    private int totalBases=0;
+    private double totalCost=0;
+    private double baseCost=318000000;
+    private string currentTier="Base";
+    private int numberOfClicks=10000;
+    
+    private async Task StartSimulator(){
+        totalBases++;
+        for(int i=0;i<numberOfClicks;i++){
+            totalBases++;
+            Random random = new Random();
+            double randDouble = (double)random.Next(0,1000)/1000;
+            double enhancementSuccess=0;
+            
+            switch(currentTier){
+                case "Base":
+                    
+                    if(priStack>18){
+                        totalBases++;
+                        enhancementSuccess+=.25+18*.025;
+                        
+                        enhancementSuccess+=(priStack-18)*.005;
+                        
+                    }
+                    else{
+                        enhancementSuccess+=priStack*.025+.25;
+                    }
+                    
+                    break;
+                case "Pri":
+                    if(duoStack>40){
+                        enhancementSuccess+=.10+40*.01;
+                        
+                        enhancementSuccess+=(duoStack-40)*.002;
+                    }
+                    else{
+                        enhancementSuccess+=duoStack*.01+.1;
+                    }
+                    break;
+                case "Duo":
+                    if(triStack>44){
+                        enhancementSuccess+=.075+44*.0075;
+                    
+                        enhancementSuccess+=(triStack-44)*.0015;
+                    }
+                    else{
+                        enhancementSuccess+=triStack*.0075+.075;
+                    }
+                    break;
+                case "Tri":
+                    if(tetStack>110){
+                        enhancementSuccess+=.025+110*.0025;
+                        
+                        enhancementSuccess+=(tetStack-110)*.0005;
+                    }
+                    else{
+                        enhancementSuccess+=tetStack*.0025+.025;
+                    }
+                    break;
+                case "Tet":
+                    if(penStack>490){
+                        enhancementSuccess+=.005+490*.0005;
+                        enhancementSuccess+=(penStack-490)*.0001;
+                    }
+                    else{
+                        enhancementSuccess+=penStack*.0005+.005;
+                    }
+                    break;
+            }
+            
+            if(enhancementSuccess>.9){
+                enhancementSuccess=.9;
+            }
+            switch(currentTier){
+                case "Base":
+                    totalCost+=baseCost*2;
+                    if(randDouble<enhancementSuccess||priAgris>4){
+                        priSuccess++;
+                        currentTier="Pri";
+                        if(priAgris<=4){
+                            priStack=50;
+                        }
+                        priAgris=0;
+                    }
+                    else{
+                        currentTier="Base";
+                        priStack+=1;
+                        priAgris++;
+                    }
+                    break;
+                case "Pri":
+                    totalCost+=baseCost;
+                    if(randDouble<enhancementSuccess||duoAgris>5){
+                        duoSuccess++;
+                        currentTier="Duo";
+                        if(duoAgris<=5){
+                            duoStack=60;
+                        }
+                        duoAgris=0;
+                    }
+                    else{
+                        currentTier="Base";
+                        duoStack+=1;
+                        duoAgris++;
+                    }
+                    break;
+                case "Duo":
+                    totalCost+=baseCost;
+                    if(randDouble<enhancementSuccess||triAgris>7){
+                        triSuccess++;
+                        currentTier="Tri";
+                        if(triAgris<=7){
+                            triStack=100;
+                        }
+                        triAgris=0;
+                    }
+                    else{
+                        currentTier="Base";
+                        triStack+=1;
+                        triAgris++;
+                    }
+                    break;
+                case "Tri":
+                    totalCost+=baseCost;
+                    if(randDouble<enhancementSuccess||tetAgris>9){
+                        tetSuccess++;
+                        currentTier="Tet";
+                        if(tetAgris<=9){
+                            tetStack=120;
+                        }
+                        tetAgris=0;
+                        
+                    }
+                    else{
+                        currentTier="Base";
+                        tetStack+=1;
+                        tetAgris++;
+                    }
+                    break;
+                case "Tet":
+                    totalCost+=baseCost;
+                    if(randDouble<enhancementSuccess||penAgris>19){
+                        penSuccess++;
+                        currentTier="Base";
+                        if(penAgris<=19){
+                            penStack=300;
+                        }
+                        penAgris=0;
+                        
+                    }
+                    else{
+                        currentTier="Base";
+                        penStack+=1;
+                        penAgris++;
+                        }
+                    break;
+            
+
+            }
+            
+
+        }
+    }
+}
